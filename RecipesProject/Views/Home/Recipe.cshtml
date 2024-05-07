@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Recipe>
+@* @model IEnumerable<Trips.Models.Trip> *@
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_layout1.cshtml";
+}
+
+@*<h1> Recipes</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Recipe</a>
+</p> *@
+<style>
+    /* Add margin between sections */
+    .hero-wrap {
+        margin-bottom: 50px; /* Adjust the value as needed */
+    }
+
+    /* Add padding between cards */
+    .card {
+        margin-bottom: 30px; /* Adjust the value as needed */
+    }
+
+</style>
+
+
+<section class="hero-wrap hero-wrap-2 mt-5" style="background-image: url('images/bg_5.jpg');" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-end justify-content-center">
+            <div class="col-md-9 ftco-animate text-center mb-5">
+                <h1 class="mb-2 bread">Master Chef</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home <i class="fa fa-chevron-right"></i></a></span> <span>Chef <i class="fa fa-chevron-right"></i></span></p>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<form asp-controller="Home" asp-action="Recipe" method="get">
+    <div class="form-group">
+        <label for="category">Filter by Category:</label>
+        <select class="form-control" id="category" name="category">
+            <option value="">All Categories</option>
+            <!-- Generate options dynamically based on ViewBag.Categories -->
+            @foreach (var category in ViewBag.Categories)
+            {
+                <option value="@category">@category</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form> 
+
+
+<div class="row mt-5">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="~/Images/@item.Imagepath" class="card-img-top" alt="@item.Recipename">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Recipename</h5>
+                    <p class="card-text">@item.Description</p>
+                    <p class="card-text">Price: @item.Price</p>
+                    <button class="btn btn-primary custom-btn" onclick="redirectToPayment(@item.Price, @item.Recipeid)">Buy Recipe</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <script>
+        function redirectToPayment(price, recipeId) {
+            window.location.href = '/Home/BuyRecipe?RecipePrice=' + price + '&RecipeId=' + recipeId;
+        }
+    </script>
+
+</div>

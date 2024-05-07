@@ -1,0 +1,140 @@
+﻿@model IEnumerable<RecipesProject.Models.Recipe>
+
+<!-- Update your view to work with Recipe model -->
+@* @{
+    Layout = "~/Views/Shared/_Homelayout.cshtml";
+} *@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Recipes | Payment Form</title>
+@*     <link rel="stylesheet" href="assets/css/style-freedom.css">
+ *@
+</head>
+<body>
+    <!-- inner banner -->
+    <section class="w3l-inner-banner-main">
+        <div class="banner-9">
+            <div class="wrapper">
+                <ul class="breadcrumbs-custom-path">
+                    <li><a href="index.html">Home <span class="fa fa-angle-right" aria-hidden="true"></span></a></li>
+                    <li><a href="#pages">Pages <span class="fa fa-angle-right" aria-hidden="true"></span></a></li>
+                    <li class="active">Book</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <!-- //covers -->
+    <form asp-controller="Soldrecipes" asp-action="BuyRecipe" method="post">
+        <!-- Add your anti-forgery token here if needed -->
+        <h1>Payment Form</h1>
+
+        <!-- Card Number -->
+        <label for="Cardnumber">Card Number:</label>
+        <input type="text" id="Cardnumber" name="visa.Cardnumber" required>
+
+        <!-- Holder Name -->
+        <label for="Holdername">Holder Name:</label>
+        <input type="text" id="Holdername" name="visa.Holdername" required>
+
+        <!-- CVV -->
+        <label for="Cvv">CVV:</label>
+        <input type="text" id="Cvv" name="visa.Cvv" required>
+
+        <!-- Expiration Date -->
+        <label for="Expirydate">Expiration Date:</label>
+        <input type="text" id="Expirydate" name="visa.Expirydate" placeholder="MM/YYYY" pattern="\d{2}/\d{4}" required>
+
+        <!-- Recipe Price (Read-only) -->
+        <label for="RecipePrice">Recipe Price:</label>
+        <input type="text" id="RecipePrice" name="RecipePrice" value="@ViewBag.RecipePrice" readonly>
+
+        <!-- Recipe ID (Hidden) -->
+        <input type="hidden" name="Recipeid" value="@ViewBag.RecipeId">
+
+        <!-- Submit Button -->
+        <button type="submit">Submit Payment</button>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+    </form>
+
+
+</body>
+</html>
+
+<style>
+    body {
+        background-color: white (239, 232, 232);
+        margin: 0;
+    }
+
+    form {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+        margin: 50px auto; /* Adjust margin as needed */
+    }
+
+    h1 {
+        color: #343a40;
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #495057;
+        font-size: 14px;
+    }
+
+    input {
+        width: calc(100% - 16px);
+        padding: 10px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    small {
+        color: #6c757d;
+        display: block;
+        margin-top: 4px;
+    }
+
+    button {
+        background-color: #007bff;
+        color: #fff;
+        padding: 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+</style>
