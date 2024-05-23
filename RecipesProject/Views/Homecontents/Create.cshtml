@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = "Create";
 }
-
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
 <h1>Create</h1>
 
 <h4>Homecontent</h4>
@@ -33,6 +35,4 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+

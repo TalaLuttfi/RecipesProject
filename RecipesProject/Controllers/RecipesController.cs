@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RecipesProject.Models;
 
+
 namespace RecipesProject.Controllers
 {
     public class RecipesController : Controller
@@ -44,12 +45,18 @@ namespace RecipesProject.Controllers
 
             return View(recipe);
         }
-
         // GET: Recipes/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["Categoryid"] = new SelectList(_context.Recipecategories, "Categoryid", "Categoryid");
+            var categories = await _context.Recipecategories.ToListAsync();
+            ViewBag.Categoryid = new SelectList(categories, "Categoryid", "Categoryname");
+
+            //ViewData["Categoryid"] = new SelectList(_context.Recipecategories, "Categoryid", "Categoryid");
             ViewData["Chefid"] = new SelectList(_context.Users, "Userid", "Userid");
+
+            // Set Approval Status to "Pending" by default
+            ViewData["ApprovalStatus"] = "Pending";
+
             return View();
         }
 
@@ -60,15 +67,20 @@ namespace RecipesProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Recipeid,Chefid,Categoryid,Recipename,Description,Ingredients,Instructions,Imagepath,Price,Approvalstatus")] Recipe recipe)
         {
+            int loggedInUserId = HttpContext.Session.GetInt32("Userid") ?? 0; // Default to 0 if session value is null
+
             if (ModelState.IsValid)
             {
+                // Set Approval Status to "Pending" by default
+                recipe.Approvalstatus = "Pending";
+
                 _context.Add(recipe);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("SeeRecipe", "Home", new { chefid = loggedInUserId });
             }
             ViewData["Categoryid"] = new SelectList(_context.Recipecategories, "Categoryid", "Categoryid", recipe.Categoryid);
             ViewData["Chefid"] = new SelectList(_context.Users, "Userid", "Userid", recipe.Chefid);
-            return View(recipe);
+            return RedirectToAction("SeeRecipe", "Home", new { chefid = loggedInUserId });
         }
 
         // GET: Recipes/Edit/5
@@ -96,6 +108,8 @@ namespace RecipesProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(decimal id, [Bind("Recipeid,Chefid,Categoryid,Recipename,Description,Ingredients,Instructions,Imagepath,Price,Approvalstatus")] Recipe recipe)
         {
+            int loggedInUserId = HttpContext.Session.GetInt32("Userid") ?? 0; // Default to 0 if session value is null
+
             if (id != recipe.Recipeid)
             {
                 return NotFound();
@@ -119,7 +133,7 @@ namespace RecipesProject.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Recipes", new { chefid = loggedInUserId });
             }
             ViewData["Categoryid"] = new SelectList(_context.Recipecategories, "Categoryid", "Categoryid", recipe.Categoryid);
             ViewData["Chefid"] = new SelectList(_context.Users, "Userid", "Userid", recipe.Chefid);
@@ -147,22 +161,23 @@ namespace RecipesProject.Controllers
         }
 
         // POST: Recipes/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(decimal id)
         {
-            if (_context.Recipes == null)
-            {
-                return Problem("Entity set 'ModelContext.Recipes'  is null.");
-            }
+            int loggedInUserId = HttpContext.Session.GetInt32("Userid") ?? 0; // Default to 0 if session value is null
+
             var recipe = await _context.Recipes.FindAsync(id);
-            if (recipe != null)
+
+            if (recipe == null)
             {
-                _context.Recipes.Remove(recipe);
+                return NotFound(); // Recipe not found, return appropriate response
             }
-            
+
+            _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction("Index", "Recipes", new { chefid = loggedInUserId });
         }
 
         private bool RecipeExists(decimal id)

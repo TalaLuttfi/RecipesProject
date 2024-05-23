@@ -1,0 +1,76 @@
+﻿@model IEnumerable<RecipesProject.Models.Recipe>
+
+@{
+    Layout = "~/Views/Shared/_Cheflayout.cshtml";
+}
+
+
+<style>
+    .hero-wrap {
+        margin-bottom: 50px;
+    }
+
+    .card {
+        margin-bottom: 30px;
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    .form-group {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    .btn {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+</style>
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url(/HomeAssets/images/bg_5.jpg);" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-end justify-content-center">
+            <div class="col-md-9 ftco-animate text-center mb-5">
+                <h1 class="mb-2 bread">Recipes</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home <i class="fa fa-chevron-right"></i></a></span> <span>Recipes <i class="fa fa-chevron-right"></i></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<form asp-controller="Home" asp-action="Search" method="get">
+    <div class="form-group">
+        <label for="keyword">Search Recipes:</label>
+        <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Enter keyword...">
+    </div>
+    <div class="form-group">
+        <label for="category">Filter by Category:</label>
+        <select class="form-control" id="category" name="category">
+            <option value="">All Categories</option>
+            @foreach (var category in ViewBag.Categories)
+            {
+                <option value="@category">@category</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<div class="row mt-5">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="~/Images/@item.Imagepath" class="card-img-top" alt="@item.Recipename" style="width: 100%; height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Recipename</h5>
+                    <p class="card-text">@item.Description</p>
+                    <p class="card-text">Price: @item.Price</p>
+                    <a href="/Home/BuyRecipe?cost=@item.Price&recipeId=@item.Recipeid" class="btn btn-primary custom-btn">Buy Recipe</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

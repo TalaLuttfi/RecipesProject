@@ -1,0 +1,22 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@model List<Testimonial>
+
+@foreach (var testimonial in Model)
+{
+    <div>
+        <p>@testimonial.Testimonialtext</p>
+        <p>Status: @testimonial.Approvalstatus</p>
+        @using (Html.BeginForm("ApproveTestimonial", "Testimonial", FormMethod.Post))
+        {
+            <input type="hidden" name="testimonialId" value="@testimonial.Testimonialid" />
+            <button type="submit">Approve</button>
+        }
+        @using (Html.BeginForm("DeleteTestimonial", "Testimonial", FormMethod.Post))
+        {
+            <input type="hidden" name="testimonialId" value="@testimonial.Testimonialid" />
+            <button type="submit">Delete</button>
+        }
+    </div>
+}

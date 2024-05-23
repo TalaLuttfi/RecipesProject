@@ -61,13 +61,36 @@ namespace RecipesProject.Controllers
             {
                 _context.Add(contactu);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                // Add a success message to TempData
+                TempData["SuccessMessage"] = "Your message was sent successfully.";
+
+                // Redirect back to the same page
+                return RedirectToAction("Contact", "Home");
             }
             return View(contactu);
         }
 
-        // GET: Contactus/Edit/5
-        public async Task<IActionResult> Edit(decimal? id)
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> CreateIn([Bind("Contactusid,Message,Phonenumber,Senderemail")] Contactu contactu)
+		{
+			if (ModelState.IsValid)
+			{
+				_context.Add(contactu);
+				await _context.SaveChangesAsync();
+
+				// Add a success message to TempData
+				TempData["SuccessMessage"] = "Your message was sent successfully.";
+
+				// Redirect back to the same page
+				return RedirectToAction("Index", "Home");
+			}
+			return View(contactu);
+		}
+
+		// GET: Contactus/Edit/5
+		public async Task<IActionResult> Edit(decimal? id)
         {
             if (id == null || _context.Contactus == null)
             {

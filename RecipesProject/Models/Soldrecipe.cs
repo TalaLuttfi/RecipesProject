@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecipesProject.Models;
 
@@ -16,4 +17,5 @@ public partial class Soldrecipe
     public virtual User? Buyer { get; set; }
 
     public virtual Recipe? Recipe { get; set; }
+
 }

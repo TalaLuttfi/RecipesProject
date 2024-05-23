@@ -4,7 +4,7 @@ using RecipesProject.Models;
 using System.Diagnostics;
 using RecipesProject.Models;
 using System.Security.Claims;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace RecipesProject.Controllers
 {
@@ -23,19 +23,49 @@ namespace RecipesProject.Controllers
         }
 
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
-			// Assuming you want to display the latest testimonial or any specific testimonial
-			var testimonial = _context.Testimonials.FirstOrDefault(); // You may need to adjust this query based on your requirement
+			var combinedTestimonialsData = await _context.Testimonials
+				.Include(t => t.User)
+				.Where(t => t.Approvalstatus == "Approved")
+				.Select(t => new Tuple<Testimonial, User>(t, t.User))
+				.ToListAsync();
 
-			return View(testimonial);
+			var chefs = await _context.Users
+				.Where(u => u.Roleid == 2)
+				.ToListAsync();
+
+			var recipes = await _context.Recipes
+				.ToListAsync();
+
+			// Combine testimonials data with users and recipes
+			var combinedData = new Tuple<List<Tuple<Testimonial, User>>, List<User>, List<Recipe>>(
+				combinedTestimonialsData, chefs, recipes);
+
+			return View(combinedData);
 		}
-		public IActionResult User()
-		{
-			// Assuming you want to display the latest testimonial or any specific testimonial
-			var testimonial = _context.Testimonials.FirstOrDefault(); // You may need to adjust this query based on your requirement
 
-			return View(testimonial);
+		public async Task<IActionResult> User()
+		{
+
+			var combinedTestimonialsData = await _context.Testimonials
+				.Include(t => t.User)
+				.Where(t => t.Approvalstatus == "Approved")
+				.Select(t => new Tuple<Testimonial, User>(t, t.User))
+				.ToListAsync();
+
+			var chefs = await _context.Users
+				.Where(u => u.Roleid == 2)
+				.ToListAsync();
+
+			var recipes = await _context.Recipes
+				.ToListAsync();
+
+			// Combine testimonials data with users and recipes
+			var combinedData = new Tuple<List<Tuple<Testimonial, User>>, List<User>, List<Recipe>>(
+				combinedTestimonialsData, chefs, recipes);
+
+			return View(combinedData);
 		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -56,37 +86,59 @@ namespace RecipesProject.Controllers
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
 
-
-        public async Task<IActionResult> Chefrecipe()
+        public async Task<IActionResult> SeeRecipe(decimal chefid, string category)
         {
+            // Retrieve categories from the database asynchronously
+            var categories = await _context.Recipecategories.Select(c => c.Categoryname).ToListAsync();
+            ViewBag.Categories = categories;
+
+            // Retrieve recipes for the selected chef with an approval status of "Approved" from the database asynchronously
+            var recipesQuery = _context.Recipes
+                                       .Where(r => r.Chefid == chefid && r.Approvalstatus == "Approved"); // Filter by chefId and approval status
+
+            // Retrieve recipes from the database asynchronously
+            var recipes = await recipesQuery.ToListAsync();
+
+            // Pass the list of approved recipes to the view along with the logged-in chef's ID
+            ViewBag.ChefId = chefid;
+            return View(recipes);
+        }
+
+
+        public async Task<IActionResult> Myrecipe()
+        {
+
             // Retrieve chefs with role ID 3 from the database asynchronously
             var chefs = await _context.Users.Where(u => u.Roleid == 2).ToListAsync();
 
             // Pass the list of chefs to the view
             return View(chefs);
-            //    // Retrieve the logged-in chef's ID from claims
-            //    var loggedInChefId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            //    if (loggedInChefId == null)
-            //    {
-            //        // Handle case where user is not authenticated
-            //        return RedirectToAction("Login", "Account"); // Redirect to login page
-            //    }
-
-            //    // Retrieve chefs from the database asynchronously
-            //    var chefs = await _context.Users.Where(u => u.Roleid == 2).ToListAsync();
-
-            //    // Pass the list of chefs and the logged-in chef's ID to the view
-            //    ViewBag.LoggedInChefId = loggedInChefId;
         }
-    
-        public IActionResult Chefindex()
+
+		public async Task<IActionResult> Chefindex()
         {
-            return View();
-        }
+
+
+			var combinedTestimonialsData = await _context.Testimonials
+				.Include(t => t.User)
+				.Where(t => t.Approvalstatus == "Approved")
+				.Select(t => new Tuple<Testimonial, User>(t, t.User))
+				.ToListAsync();
+
+			var chefs = await _context.Users
+				.Where(u => u.Roleid == 2)
+				.ToListAsync();
+
+			var recipes = await _context.Recipes
+				.ToListAsync();
+
+			// Combine testimonials data with users and recipes
+			var combinedData = new Tuple<List<Tuple<Testimonial, User>>, List<User>, List<Recipe>>(
+				combinedTestimonialsData, chefs, recipes);
+
+			return View(combinedData);
+		}
         public async Task<IActionResult> Chef()
         {
             // Retrieve chefs with role ID 3 from the database asynchronously
@@ -96,85 +148,156 @@ namespace RecipesProject.Controllers
             return View(chefs);
         }
 
-        public async Task<IActionResult> Recipe(decimal chefid, string category)
-        {
-            // Retrieve categories from the database asynchronously
+        public async Task<IActionResult> ChefRecipes(decimal chefid, string category)
+        {    // Retrieve categories from the database asynchronously
             var categories = await _context.Recipecategories.Select(c => c.Categoryname).ToListAsync();
             ViewBag.Categories = categories;
 
-            // Pass the categories and other necessary data to the view
-            ViewBag.Categories = categories;
-
-            // Retrieve recipes for the selected chef from the database asynchronously
+            // Retrieve recipes for the selected chef with an approval status of "Approved" from the database asynchronously
             var recipesQuery = _context.Recipes
-                                .Where(r => r.Chefid == chefid); // Capture chefId here
-            //foreach (var Recipe in Recipes)
-            //{
-            //    if (Recipe.CategoryID.HasValue)
-            //    {
-            //        Recipe.CategoryName = categories.FirstOrDefault(c => c == Recipe.CategoryID.ToString()) ?? "Unknown";
-            //    }
-            //    else
-            //    {
-            //        Recipe.Categoryname = "Unknown";
-            //    }
-            //}
+                                       .Where(r => r.Chefid == chefid && r.Approvalstatus == "Approved"); // Filter by chefId and approval status
+
             // Retrieve recipes from the database asynchronously
             var recipes = await recipesQuery.ToListAsync();
 
-            // Pass the list of recipes to the view
+            // Pass the list of approved recipes to the view along with the logged-in chef's ID
+            ViewBag.ChefId = chefid;
             return View(recipes);
         }
-
-        public ActionResult Search(string searchTerm, string destination, string Category)
+        public async Task<IActionResult> Recipes()
         {
-            // Your logic to filter trips based on searchTerm, destination, and categoryName
-            var filteredTrips = _context.Recipes.ToList();
+            var categories = await _context.Recipecategories
+                .Select(c => c.Categoryname)
+                .Distinct()
+                .ToListAsync();
 
-           
+            ViewBag.Categories = categories; // Use the list directly
 
-            if (!string.IsNullOrEmpty(Category))
+            var approvedRecipes = await _context.Recipes
+                .Where(r => r.Approvalstatus == "Approved")
+                .ToListAsync();
+
+            return View(approvedRecipes);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Search(string keyword, string category)
+        {
+            var recipes = _context.Recipes
+                .Include(r => r.Category) // Ensure Category is included to filter by category name
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(keyword))
             {
-                // Find the category ID based on the provided categoryName
-                var categoryId = _context.Recipecategories
-                    .Where(c => c.Categoryname == Category)
-                    .Select(c => c.Categoryid)
-                    .FirstOrDefault();
-
-                // Filter trips based on the found category ID
-                if (categoryId > 0)
-                {
-                    filteredTrips = filteredTrips.Where(t => t.Categoryid == categoryId).ToList();
-                }
-                else
-                {
-                    // Handle the case where the category name is not found
-                    // You can redirect to an error page or handle it as needed
-                    return RedirectToAction("Error");
-                }
+                var lowerKeyword = keyword.ToLower();
+                recipes = recipes.Where(r => r.Recipename.ToLower().Contains(lowerKeyword) ||
+                                             r.Description.ToLower().Contains(lowerKeyword) ||
+                                             r.Ingredients.ToLower().Contains(lowerKeyword) ||
+                                             r.Instructions.ToLower().Contains(lowerKeyword));
             }
 
-            // Return the filtered trips to the view
-            return View(filteredTrips);
+            if (!string.IsNullOrEmpty(category))
+            {
+                var lowerCategory = category.ToLower();
+                recipes = recipes.Where(r => r.Category.Categoryname.ToLower() == lowerCategory);
+            }
+
+            var filteredRecipes = await recipes.ToListAsync();
+
+            var categories = await _context.Recipecategories
+                .Select(c => c.Categoryname)
+                .Distinct()
+                .ToListAsync();
+
+            ViewBag.Categories = categories; // Use the list directly
+
+            return View("Recipes", filteredRecipes);
         }
 
 
-	
+        //// for admin approve recipe 
+        [HttpGet]
+        public async Task<IActionResult> ReviewRecipes()
+        {
+            var pendingRecipes = await _context.Recipes.Where(r => r.Approvalstatus == "Pending").ToListAsync();
+            return View(pendingRecipes);
+        }
 
-		//public IActionResult Testimonial()
-		//{
-		//    return View();
-		//}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApproveRecipe(int id)
+        {
+            var recipe = await _context.Recipes.FindAsync(id);
+            if (recipe == null)
+            {
+                return NotFound();
+            }
 
-		//[HttpPost] // This attribute indicates that this action method should be invoked for HTTP POST requests
-		//public IActionResult Submit(Testimonial testimonial)
-		//{
-		//    // Save the testimonial to the database
-		//    // You need to implement the logic to save the testimonial to your database here
+            recipe.Approvalstatus = "Approved";
+            await _context.SaveChangesAsync();
 
-		//    // Redirect to a thank you page or show a success message
-		//    return RedirectToAction("ThankYou");
-		//}
+            return RedirectToAction(nameof(ReviewRecipes));
+        }
 
-	}
+
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> About()
+        {
+            var About = _context.Aboutcontents.ToList();
+
+            // Get counts from the database using LINQ queries
+            int totalUsers = await _context.Users.CountAsync();
+            int totalRecipes = await _context.Recipes.CountAsync();
+            int totalsold = await _context.Recipes.CountAsync();
+
+            // Pass the counts to the view
+            ViewBag.TotalUsers = totalUsers;
+            ViewBag.TotalRecipes = totalRecipes;
+            ViewBag.TotalSold = totalsold;
+
+
+            var users = await _context.Users.Include(u => u.Role).ToListAsync();
+
+            return View(About);
+        }
+        public IActionResult sendemail()
+        {
+
+            return View();
+        }
+		public async Task<IActionResult> MoreInfo(int id)
+		{
+			var recipe = await _context.Recipes
+				.FirstOrDefaultAsync(r => r.Recipeid == id && r.Price == 0);
+
+			if (recipe == null)
+			{
+				return NotFound();
+			}
+
+			return View(recipe);
+		}
+
+        public async Task<IActionResult> Recipestwo()
+        {
+            var categories = await _context.Recipecategories
+                .Select(c => c.Categoryname)
+                .Distinct()
+                .ToListAsync();
+
+            ViewBag.Categories = categories; // Use the list directly
+
+            var approvedRecipes = await _context.Recipes
+                .Where(r => r.Approvalstatus == "Approved")
+                .ToListAsync();
+
+            return View(approvedRecipes);
+        }
+
+
+    }
 } 

@@ -1,37 +1,18 @@
-﻿@model IEnumerable<RecipesProject.Models.Recipe>
+﻿@model IEnumerable<Soldrecipe>
 
 <!-- Update your view to work with Recipe model -->
-@* @{
-    Layout = "~/Views/Shared/_Homelayout.cshtml";
-} *@
+@{
+    Layout = "~/Views/Shared/_layout1.cshtml";
+}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Recipes | Payment Form</title>
-@*     <link rel="stylesheet" href="assets/css/style-freedom.css">
- *@
-</head>
+
 <body>
-    <!-- inner banner -->
-    <section class="w3l-inner-banner-main">
-        <div class="banner-9">
-            <div class="wrapper">
-                <ul class="breadcrumbs-custom-path">
-                    <li><a href="index.html">Home <span class="fa fa-angle-right" aria-hidden="true"></span></a></li>
-                    <li><a href="#pages">Pages <span class="fa fa-angle-right" aria-hidden="true"></span></a></li>
-                    <li class="active">Book</li>
-                </ul>
-            </div>
-        </div>
-    </section>
+   
     <!-- //covers -->
-    <form asp-controller="Soldrecipes" asp-action="BuyRecipe" method="post">
+    <form asp-controller="Soldrecipes" asp-action="Create" method="post">
         <!-- Add your anti-forgery token here if needed -->
         <h1>Payment Form</h1>
+
 
         <!-- Card Number -->
         <label for="Cardnumber">Card Number:</label>
@@ -51,10 +32,14 @@
 
         <!-- Recipe Price (Read-only) -->
         <label for="RecipePrice">Recipe Price:</label>
-        <input type="text" id="RecipePrice" name="RecipePrice" value="@ViewBag.RecipePrice" readonly>
+        <input type="text" id="RecipePrice" name="RecipePrice" value="@Context.Request.Query["cost"]" readonly>
+
 
         <!-- Recipe ID (Hidden) -->
-        <input type="hidden" name="Recipeid" value="@ViewBag.RecipeId">
+        <label for="RecipeId">Recipe ID:</label>
+        <input type="text" id="RecipeId" name="RecipeId" value="@Context.Request.Query["recipeId"]" readonly>
+
+        
 
         <!-- Submit Button -->
         <button type="submit">Submit Payment</button>
@@ -75,7 +60,7 @@
 
 
 </body>
-</html>
+
 
 <style>
     body {

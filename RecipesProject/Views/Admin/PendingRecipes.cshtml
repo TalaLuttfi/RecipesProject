@@ -1,0 +1,47 @@
+﻿@model List<Recipe>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>Pending Recipes</h2>
+
+@if (Model.Count == 0)
+{
+    <p>No pending recipes.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Recipe ID</th>
+                <th>Chef ID</th>
+                <th>Recipe Name</th>
+                <th>Description</th>
+                <!-- Add more columns as needed -->
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var recipe in Model)
+            {
+                <tr>
+                    <td>@recipe.Recipeid</td>
+                    <td>@recipe.Chefid</td>
+                    <td>@recipe.Recipename</td>
+                    <td>@recipe.Description</td>
+                    <!-- Add more columns as needed -->
+                    <td>
+                        <form method="post" asp-action="ApproveRecipe">
+                            <input type="hidden" name="recipeId" value="@recipe.Recipeid" />
+                            <button type="submit" class="btn btn-primary">Approve</button>
+                        </form>
+                        <form method="post" asp-action="DeleteRecipe">
+                            <input type="hidden" name="recipeId" value="@recipe.Recipeid" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

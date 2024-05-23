@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<RecipesProject.Models.Soldrecipe>
 
 @{
-    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <h1>Index</h1>
@@ -9,6 +9,18 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<!-- Form for filtering by start and end dates -->
+<form asp-action="Index" method="get">
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" name="startDate">
+
+    <label for="endDate">End Date:</label>
+    <input type="date" id="endDate" name="endDate">
+
+    <button type="submit">Filter</button>
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -16,32 +28,33 @@
                 @Html.DisplayNameFor(model => model.Purchasedate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Buyer)
+                Buyer Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Recipe)
+                Recipe Name
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Purchasedate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Buyer.Userid)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Recipe.Recipeid)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Soldrecipeid">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Soldrecipeid">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Soldrecipeid">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Purchasedate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Buyer.Username)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Recipe.Recipename)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Soldrecipeid">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Soldrecipeid">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Soldrecipeid">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

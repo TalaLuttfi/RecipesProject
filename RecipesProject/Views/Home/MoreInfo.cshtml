@@ -1,0 +1,26 @@
+﻿@model RecipesProject.Models.Recipe
+
+@{
+    ViewData["Title"] = "Recipe Details";
+}
+
+<h1>@Model.Recipename</h1>
+
+<div>
+    <img src="@Model.Imagepath" alt="@Model.Recipename" />
+</div>
+
+<div>
+    <h3>Description</h3>
+    <p>@Model.Description</p>
+</div>
+
+<div>
+    <h3>Ingredients</h3>
+    <p>@Model.Ingredients</p>
+</div>
+
+<div>
+    <h3>Instructions</h3>
+    <p>@Model.Instructions</p>
+</div>

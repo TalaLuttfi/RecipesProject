@@ -1,7 +1,8 @@
 ﻿@{
     Layout = "~/Views/Shared/_Cheflayout.cshtml";
 }
-@model IEnumerable<User>
+ @model IEnumerable<User> 
+
 
 
 <section class="hero-wrap hero-wrap-2" style="background-image: url('/HomeAssets/images/bg_5.jpg');" data-stellar-background-ratio="0.5">
@@ -15,7 +16,6 @@
         </div>
     </div>
 </section>
-
 <div class="row">
     @foreach (var chef in Model)
     {
@@ -23,9 +23,17 @@
             <div class="card">
                 <div class="card-body text-center">
                     <img src="@Url.Content("~/Images/" + chef.Imagepath)" asp-append-version="true" style="border-radius: 50%; width: 200px; height: 200px; object-fit: cover;" />
-                    <h5 class="card-title mt-3">@chef.Username</h5>
+                    <h5 class="card-title mt-3">
+                        @if (Context.Session.GetInt32("Userid") == chef.Userid)
+                        {
+                            <text>Me</text>
+                        }
+                        else
+                        {
+                            @chef.Username
+                        }</h5>
                     <p class="card-text">@chef.Description</p>
-                    <a href="@Url.Action("Recipe", "Home", new { chefid = chef.Userid })" class="btn btn-primary">See Recipes</a>
+                    <a href="@Url.Action("SeeRecipe", "Home", new { chefid = chef.Userid })" class="btn btn-primary">See Recipes</a>
                 </div>
             </div>
         </div>
@@ -33,7 +41,8 @@
 </div>
 
 
-<section class="ftco-section ftco-wrap-about ftco-no-pb ftco-no-pt">
+
+@* <section class="ftco-section ftco-wrap-about ftco-no-pb ftco-no-pt"> *@
     <div class="container">
         <div class="row no-gutters">
             <div class="col-sm-4 p-4 p-md-5 d-flex align-items-center justify-content-center bg-primary">

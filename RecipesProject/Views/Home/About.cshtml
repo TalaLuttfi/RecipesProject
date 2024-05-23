@@ -1,0 +1,91 @@
+﻿@{
+    Layout = "~/Views/Shared/_layout1.cshtml";
+}
+
+@model IEnumerable<Aboutcontent>
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url(/HomeAssets/images/bg_5.jpg);" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-end justify-content-center">
+            <div class="col-md-9 ftco-animate text-center mb-5">
+                <h1 class="mb-2 bread">About</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home <i class="fa fa-chevron-right"></i></a></span> <span>About <i class="fa fa-chevron-right"></i></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="ftco-section ftco-no-pt ftco-no-pb">
+    <div class="container">
+        <div class="row d-flex">
+            <div class="col-md-6 d-flex">
+                <div class="img img-2 w-100 mr-md-2" style="background-image: url(/HomeAssets/images/bg_6.jpg);"></div>
+                <div class="img img-2 w-100 ml-md-2" style="background-image: url(/HomeAssets/images/bg_4.jpg);"></div>
+            </div>
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 ftco-animate makereservation p-4 p-md-5">
+                    <div class="heading-section ftco-animate mb-5">
+                        <span class="subheading">@item.Title</span>
+                        <h2 class="mb-4">@item.Title</h2>
+                        <p>
+                            @Html.Raw(item.Paragraph)
+                        </p>
+                        <!-- You can add any additional HTML elements here if needed -->
+                        <!-- For example, a button to learn more -->
+                        <!-- <p><a href="#" class="btn btn-primary">Learn more</a></p> -->
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</section>
+<section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url(/HomeAssets/images/bg_4.jpg);" data-stellar-background-ratio="0.5">
+    <div class="container">
+        <div class="row d-md-flex align-items-center justify-content-center">
+            <div class="col-lg-10">
+                <div class="row d-md-flex align-items-center">
+                  
+                    <div class="col-md d-flex justify-content-center counter-wrap ftco-animate">
+                        <div class="block-18">
+                            <div class="text">
+                                <strong class="number">@ViewBag.TotalUsers</strong>
+                                <span>Number Of Users</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md d-flex justify-content-center counter-wrap ftco-animate">
+                        <div class="block-18">
+                            <div class="text">
+                                <strong class="number">@ViewBag.TotalRecipes</strong>
+                                <span>Number Of Recipes</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md d-flex justify-content-center counter-wrap ftco-animate">
+                        <div class="block-18">
+                            <div class="text">
+                                <strong class="number">@ViewBag.TotalSold</strong>
+                                <span>Number of sold Recipes </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="ftco-section ftco-no-pt ftco-no-pb ftco-intro bg-primary">
+    <div class="container py-5">
+        <div class="row py-2">
+            <div class="col-md-12 text-center">
+                <h2>We Make Delicious &amp; Nutritious Food</h2>
+                <a href="https://localhost:7127/Home/Recipes" class="btn btn-white btn-outline-white">Buy Recipe Now</a>
+            </div>
+        </div>
+    </div>
+</section>
+

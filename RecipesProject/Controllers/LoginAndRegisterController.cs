@@ -22,25 +22,25 @@ namespace RecipesProject.Controllers
 		{
 			return View();
 		}
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public IActionResult Login(User user)
 		{
 			var auth = _context.Users.FirstOrDefault(x => x.Username == user.Username && x.Password == user.Password);
 			if (auth != null)
 			{
-				// Store both username and userid in session
+				// Store username, userid, and email in session
 				HttpContext.Session.SetString("Username", auth.Username);
 				HttpContext.Session.SetInt32("Userid", Convert.ToInt32(auth.Userid));
+				HttpContext.Session.SetString("UserEmail", auth.Email); // Store user email in session
 
 				switch (auth.Roleid)
 				{
 					case 1:
 						return RedirectToAction("Index", "Admin");
-                    case 2:
-
-                        return RedirectToAction("Chefindex", "Home");
-                    case 3:
+					case 2:
+						return RedirectToAction("Chefindex", "Home");
+					case 3:
 						return RedirectToAction("User", "Home");
 
 					// Handle other roles here
@@ -56,6 +56,7 @@ namespace RecipesProject.Controllers
 				return View();
 			}
 		}
+
 
 
 		public IActionResult Register()

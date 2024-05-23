@@ -60,7 +60,7 @@ namespace RecipesProject.Controllers
 				if (userid.HasValue)
 				{
 					testimonial.Userid = userid.Value; // Assign Userid to testimonial
-					testimonial.Approvalstatus = "0"; // Set approval status to zero
+					testimonial.Approvalstatus = "Pending"; // Set approval status to zero
 					_context.Add(testimonial);
 					await _context.SaveChangesAsync();
 					return RedirectToAction("User", "Home");
@@ -162,11 +162,11 @@ namespace RecipesProject.Controllers
             {
                 _context.Testimonials.Remove(testimonial);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
+      
         private bool TestimonialExists(decimal id)
         {
           return (_context.Testimonials?.Any(e => e.Testimonialid == id)).GetValueOrDefault();

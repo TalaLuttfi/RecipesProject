@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Index";
 }
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
 
 <h1>Index</h1>
 
@@ -30,6 +33,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Paragraph)
             </td>
+
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Homecontentid">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Homecontentid">Details</a> |

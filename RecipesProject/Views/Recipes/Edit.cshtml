@@ -1,7 +1,7 @@
 ﻿@model RecipesProject.Models.Recipe
 
 @{
-    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <h1>Edit</h1>
@@ -13,12 +13,12 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Recipeid" />
-            <div class="form-group">
-                <label asp-for="Chefid" class="control-label"></label>
-                <select asp-for="Chefid" class="form-control" asp-items="ViewBag.Chefid"></select>
+            <div class="form-group" hidden>
+                <label asp-for="Chefid" class="control-label" ></label>
+                <select asp-for="Chefid" class="form-control" asp-items="ViewBag.Chefid" ></select>
                 <span asp-validation-for="Chefid" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" hidden>
                 <label asp-for="Categoryid" class="control-label"></label>
                 <select asp-for="Categoryid" class="form-control" asp-items="ViewBag.Categoryid"></select>
                 <span asp-validation-for="Categoryid" class="text-danger"></span>
@@ -55,9 +55,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="Approvalstatus" class="control-label"></label>
-                <input asp-for="Approvalstatus" class="form-control" />
+                <select asp-for="Approvalstatus" class="form-control">
+                    <option value="Approved">Approved</option>
+                    <option value="Pending">Pending</option>
+                </select>
                 <span asp-validation-for="Approvalstatus" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -69,6 +73,3 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
